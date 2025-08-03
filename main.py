@@ -4,22 +4,10 @@ from creators.autoresponder import generate_response
 from control.notifier import notify
 
 def run():
-    print("📥 Checking inbox...")
     emails = fetch_unread_emails()
-
     for email_data in emails:
-        print(f"🔍 Processing: {email_data['subject']}")
+        print("\n📨 Raw Email Data:\n", email_data)  # 👈 Debug print
         summary = extract_lead(email_data)
-        response = generate_response(email_data)
-
-        output = f"""
-        === LEAD SUMMARY ===
-        {summary}
-        --- RESPONSE DRAFT ---
-        {response}
-        =======================
-        """
-        notify(output)
-
-if __name__ == "__main__":
-    run()
+        print("📋 Summary:", summary)
+        response = generate_response(summary)
+        send_email_response(email_data, response)
