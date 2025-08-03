@@ -1,10 +1,14 @@
 from groq import Groq
+import os
+from dotenv import load_dotenv
 
-client = Groq(api_key="GROQ_API_KEY")  # or use an environment variable
+load_dotenv()
+
+client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
 def generate_response(prompt):
     response = client.chat.completions.create(
-        model="mixtral-8x7b-32768",  # or another model like llama3-8b or gemma-7b
+        model="llama3-8b-8192",  # ✅ use a valid Groq model like llama3 or gemma
         messages=[
             {"role": "system", "content": "You are an AI autoresponder. Respond clearly and concisely."},
             {"role": "user", "content": prompt},
