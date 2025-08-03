@@ -1,21 +1,15 @@
-import imaplib, email
-from dotenv import load_dotenv
-import os
-
-load_dotenv()
-
-EMAIL = os.getenv("EMAIL")
-PASSWORD = os.getenv("PASSWORD")
-
 def fetch_unread_emails():
     mail = imaplib.IMAP4_SSL("imap.gmail.com")
     mail.login(EMAIL, PASSWORD)
     mail.select("inbox")
 
-    _, data = mail.search(None, 'UNSEEN', 'FROM', 'xyz@example.com')
-    email_ids = data[0].split()
+    # 🔧 This now fetches all unread emails
+    _, data = mail.search(None, 'UNSEEN')
+    print("📡 IMAP search result:", data)  # Debug log
 
+    email_ids = data[0].split()
     emails = []
+
     for eid in email_ids:
         _, msg_data = mail.fetch(eid, "(RFC822)")
         for response_part in msg_data:
