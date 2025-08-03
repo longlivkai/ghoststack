@@ -1,9 +1,9 @@
-from openai import OpenAI
+from groq import Groq
 import os
 from dotenv import load_dotenv
 
 load_dotenv()
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
 def generate_response(email_data):
     prompt = f"""
