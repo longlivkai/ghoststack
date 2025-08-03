@@ -1,21 +1,14 @@
 from groq import Groq
-import os
-from dotenv import load_dotenv
 
-load_dotenv()
-client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+client = Groq(api_key="GROQ_API_KEY")  # or use an environment variable
 
-def generate_response(email_data):
-    prompt = f"""
-    Write a polite, professional response to this inquiry:
-    Subject: {email_data['subject']}
-    From: {email_data['from']}
-    Body: {email_data['body']}
-
-    Offer a follow-up or request more information if needed.
-    """
+def generate_response(prompt):
     response = client.chat.completions.create(
-        model="gpt-4o",
-        messages=[{"role": "user", "content": prompt}]
+        model="mixtral-8x7b-32768",  # or another model like llama3-8b or gemma-7b
+        messages=[
+            {"role": "system", "content": "You are an AI autoresponder. Respond clearly and concisely."},
+            {"role": "user", "content": prompt},
+        ],
+        temperature=0.7
     )
     return response.choices[0].message.content.strip()
