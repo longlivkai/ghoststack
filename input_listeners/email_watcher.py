@@ -4,8 +4,8 @@ import os
 
 load_dotenv()
 
-EMAIL = os.getenv("EMAIL_ADDRESS")
-PASSWORD = os.getenv("EMAIL_PASSWORD")
+EMAIL = os.getenv("EMAIL")
+PASSWORD = os.getenv("PASSWORD")
 
 def fetch_unread_emails():
     mail = imaplib.IMAP4_SSL("imap.gmail.com")
