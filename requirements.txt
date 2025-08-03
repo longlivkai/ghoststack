@@ -1,4 +1,4 @@
-openai
+groq
 imapclient
 python-dotenv
 beautifulsoup4
