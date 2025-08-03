@@ -1,0 +1,4 @@
+openai
+imapclient
+python-dotenv
+beautifulsoup4
