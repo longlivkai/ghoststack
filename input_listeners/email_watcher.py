@@ -12,7 +12,7 @@ def fetch_unread_emails():
     mail.login(EMAIL, PASSWORD)
     mail.select("inbox")
 
-    _, data = mail.search(None, 'UNSEEN')
+    _, data = mail.search(None, 'UNSEEN', 'FROM', 'xyz@example.com')
     email_ids = data[0].split()
 
     emails = []
