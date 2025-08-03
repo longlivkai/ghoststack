@@ -23,5 +23,5 @@ def run():
         except Exception as e:
             print("❌ Error during processing:", e)
 
-    if __name__ == "__main__":
+if __name__ == "__main__":
     run()
