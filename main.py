@@ -22,3 +22,6 @@ def run():
             send_email_response(email_data, response)
         except Exception as e:
             print("❌ Error during processing:", e)
+
+    if __name__ == "__main__":
+    run()
