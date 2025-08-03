@@ -1,29 +1,30 @@
-from openai import OpenAI
 import os
-from dotenv import load_dotenv
+from groq import Groq
 
-load_dotenv()
-import sys
-
-api_key = os.getenv("OPENAI_API_KEY")
-if not api_key:
-    print("❌ OPENAI_API_KEY is not set", file=sys.stderr)
-    raise EnvironmentError("OPENAI_API_KEY not found in environment variables")
-
-client = OpenAI(api_key=api_key)
+client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
 def extract_lead(email_data):
     prompt = f"""
-    This is a raw email:
-    Subject: {email_data['subject']}
-    From: {email_data['from']}
-    Body: {email_data['body']}
+    This is a lead email. Extract the following info as JSON:
+    - name
+    - phone
+    - email
+    - company
+    - what they’re asking for or selling
 
-    Is this a potential client inquiry? If yes, extract their name, intent, and suggested response.
+    Email content:
+    \"\"\"
+    {email_data}
+    \"\"\"
     """
+
     response = client.chat.completions.create(
-        model="gpt-4o",
-        messages=[{"role": "user", "content": prompt}]
+        model="mixtral-8x7b-32768",
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant that extracts structured leads from email."},
+            {"role": "user", "content": prompt},
+        ],
+        temperature=0.2
     )
 
-    return response.choices[0].message.content.strip()
+    return response.choices[0].message.content
