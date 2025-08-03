@@ -3,7 +3,14 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv()
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+import sys
+
+api_key = os.getenv("OPENAI_API_KEY")
+if not api_key:
+    print("❌ OPENAI_API_KEY is not set", file=sys.stderr)
+    raise EnvironmentError("OPENAI_API_KEY not found in environment variables")
+
+client = OpenAI(api_key=api_key)
 
 def extract_lead(email_data):
     prompt = f"""
