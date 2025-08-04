@@ -1,5 +1,7 @@
 from groq import Groq
 import os
+import re
+import json
 
 client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
@@ -7,7 +9,7 @@ def extract_lead(email_data):
     prompt = f"""
 You are a CRM assistant. Extract key lead information from the email below.
 
-Return in JSON format with these fields:
+Return only in raw JSON format with these fields:
 - name
 - email
 - phone (if any)
@@ -29,5 +31,13 @@ Email:
 
     content = response.choices[0].message.content.strip()
 
-    # You can later convert this to a dict using json.loads if needed
-    return content
+    # Extract JSON using regex
+    json_match = re.search(r"{.*}", content, re.DOTALL)
+    if json_match:
+        try:
+            return json.loads(json_match.group())
+        except json.JSONDecodeError as e:
+            print("❌ Failed to parse JSON:", e)
+            raise
+    else:
+        raise ValueError("❌ No valid JSON found in AI response.")
