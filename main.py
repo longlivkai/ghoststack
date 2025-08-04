@@ -21,7 +21,7 @@ def run():
             summary = extract_lead(email_data)  # already a dict
             print("📋 Summary:\n", summary)
 
-            response = generate_response(summary)  # accepts dict now
+            response = generate_response(summary, original_message=email_data["body"])
 
             send_email_response(
                 to_email=summary["email"],
