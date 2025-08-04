@@ -1,44 +1,41 @@
-from groq import Groq
-import os
-from dotenv import load_dotenv
-
-load_dotenv()
-
-client = Groq(api_key=os.getenv("GROQ_API_KEY"))
-
 def generate_response(summary, tone="friendly"):
-    """
-    Generate an AI response based on a lead summary.
-    
-    Parameters:
-    - summary: dict with keys (name, email, phone, company, interest_summary)
-    - tone: string – 'friendly', 'professional', or 'casual'
-    """
+    from textwrap import dedent
+
     name = summary.get("name", "the sender")
     interest = summary.get("interest_summary", "their inquiry")
 
     tone_prompt = {
-        "friendly": "Write in a warm, approachable tone.",
-        "professional": "Write in a concise, respectful business tone.",
-        "casual": "Write casually, like you're talking to a peer or friend.",
-    }.get(tone, "Write in a clear and helpful tone.")
+        "friendly": "Use a warm, polite, and welcoming tone.",
+        "professional": "Use a formal, respectful, and business-like tone.",
+        "casual": "Use a relaxed, friendly, and conversational tone.",
+    }.get(tone, "Use a clear, helpful tone.")
 
-    prompt = f"""
-You received an email from {name}.
-Their message or interest is: "{interest}"
+    prompt = dedent(f"""
+    You are an AI assistant responding to a lead.
 
-{tone_prompt}
-Thank them for reaching out, briefly acknowledge their request, and let them know you’ll respond soon.
-Sign the message as “Malakai” and avoid overpromising.
-    """
+    The sender's name is: {name}
+    They are interested in: "{interest}"
+
+    {tone_prompt}
+    
+    Write a short and appropriate email response:
+    - Thank them for reaching out.
+    - Acknowledge their request.
+    - Mention that you'll get back to them shortly.
+    - Sign off as "Malakai".
+
+    Do not repeat their message.
+    Do not overpromise.
+    Only output the email body.
+    """)
 
     response = client.chat.completions.create(
         model="llama3-8b-8192",
         messages=[
-            {"role": "system", "content": "You are an AI autoresponder. Respond clearly and concisely."},
+            {"role": "system", "content": "You are a helpful AI autoresponder for a tech service business."},
             {"role": "user", "content": prompt},
         ],
-        temperature=0.7
+        temperature=0.6
     )
 
     return response.choices[0].message.content.strip()
