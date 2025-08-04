@@ -8,45 +8,48 @@ load_dotenv()
 client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
 def generate_response(summary, tone="friendly", original_message=""):
-    """
-    Generate an AI response based on a lead summary.
-    
-    Parameters:
-    - summary: dict with keys (name, email, phone, company, interest_summary)
-    - tone: string – 'friendly', 'professional', or 'casual'
-    """
+    from groq import Groq
+    import os
+    from dotenv import load_dotenv
+    load_dotenv()
+
+    client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+
     name = summary.get("name", "the sender")
     interest = summary.get("interest_summary", "their inquiry")
 
     tone_prompt = {
-        "friendly": "Write in a warm, approachable tone.",
-        "professional": "Write in a concise, respectful business tone.",
-        "casual": "Write casually, like you're talking to a peer or friend.",
-    }.get(tone, "Write in a clear and helpful tone.")
+        "friendly": "Use a warm, approachable tone.",
+        "professional": "Use a concise, respectful business tone.",
+        "casual": "Use a relaxed, informal tone.",
+    }.get(tone, "Use a clear and helpful tone.")
 
     prompt = f"""
-You received an email from {name}.
+You are an assistant helping Malakai respond to leads.
 
-Here is the original message they sent:
-
+Here is the original message from {name}:
 \"\"\"
 {original_message}
 \"\"\"
 
-A summary of their interest is: "{interest}"
+Summary of the person's interest:
+{interest}
 
-{tone_prompt}
-Please write a reply thanking them for reaching out, briefly addressing their message, and letting them know you'll get back to them soon. 
-Sign the message as “Malakai” and keep the response polite and helpful without overpromising.
-    """
+Instructions:
+- Write a fresh, original email reply (no paraphrasing)
+- Thank the person for reaching out
+- Briefly acknowledge the summary of their request
+- Let them know Malakai will follow up soon
+- Keep the tone: {tone_prompt}
+- Sign off as “Malakai”
+- **Do NOT repeat or summarize the original message directly**
 
-    # ✅ ACTUAL CALL TO GROQ API
+Write only the email body.
+"""
+
     response = client.chat.completions.create(
-        model="llama3-8b-8192",
-        messages=[
-            {"role": "system", "content": "You are an AI autoresponder. Respond clearly and concisely."},
-            {"role": "user", "content": prompt},
-        ],
+        model="mixtral-8x7b-32768",
+        messages=[{"role": "user", "content": prompt}],
         temperature=0.7
     )
 
