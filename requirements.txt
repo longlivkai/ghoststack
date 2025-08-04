@@ -1,4 +1,5 @@
 groq
+sendgrid
 imapclient
 python-dotenv
 beautifulsoup4
