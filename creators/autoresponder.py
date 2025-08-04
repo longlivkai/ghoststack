@@ -19,30 +19,28 @@ def generate_response(summary, tone="friendly"):
         "casual": "Be casual and easygoing.",
     }.get(tone, "Be helpful and clear.")
 
-    prompt = f"""
-You are a helpful assistant writing an email reply to a potential client.
+        prompt = f"""
+You are an AI assistant. A potential client named {name} has reached out.
 
-The client’s name is: {name}
-They expressed interest in: {interest}
+They are interested in: {interest}
 
-{tone_prompt}
-Do NOT repeat the user's email message directly.
-Instead:
+Your job is to write a brief reply. DO NOT copy or repeat anything from their message. Instead:
+
 - Thank them for reaching out.
-- Acknowledge their request.
+- Acknowledge their interest in website services.
 - Let them know you'll follow up soon.
-- Sign off as “Malakai”.
+- Use a {tone} tone.
+- Sign off as "Malakai".
 
-Avoid making promises or asking for details. Keep it short and clear.
+Example format:
+
+Dear [Client Name],
+
+Thanks for reaching out! I appreciate your interest in [service]. I'll be in touch shortly to discuss how we can move forward.
+
+Best regards,  
+Malakai
+
+Again, DO NOT copy or paraphrase the user’s email message.
+Only use the summary of their interest and name.
 """
-
-    response = client.chat.completions.create(
-        model="llama3-8b-8192",
-        messages=[
-            {"role": "system", "content": "You are an AI autoresponder that replies to customer leads clearly and politely."},
-            {"role": "user", "content": prompt},
-        ],
-        temperature=0.5
-    )
-
-    return response.choices[0].message.content.strip()
