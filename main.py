@@ -25,7 +25,7 @@ def run():
 
             send_email_response(
                 to_email=summary["email"],
-                subject="Re: " + (summary.get("interest_summary") or "your message"),
+                subject = "Re: " + str(summary.get("interest_summary", "your message")),
                 body=response
             )
 
