@@ -1,4 +1,4 @@
-import json  # 🔼 Add this to parse the Groq output
+import json
 from input_listeners.email_watcher import fetch_unread_emails
 from processors.lead_parser import extract_lead
 from creators.autoresponder import generate_response
@@ -18,20 +18,18 @@ def run():
     for email_data in emails:
         print("\n📨 Raw Email Data:\n", email_data)
         try:
-            summary_str = extract_lead(email_data)
-            print("📋 Summary:\n", summary_str)
+            summary = extract_lead(email_data)  # already a dict
+            print("📋 Summary:\n", summary)
 
-            summary = json.loads(summary_str)  # ✅ Convert to dict
-
-            response = generate_response(json.dumps(summary))  # 🔁 Properly pass string
+            response = generate_response(summary)  # accepts dict now
 
             send_email_response(
                 to_email=summary["email"],
-                subject="Re: " + (summary["interest_summary"] or "your message"),
+                subject="Re: " + (summary.get("interest_summary") or "your message"),
                 body=response
             )
 
-            notify(summary_str)  # Optional: log the JSON string
+            notify(summary)  # pass dict directly if notify accepts it
 
         except Exception as e:
             print("❌ Error during processing:", e)
