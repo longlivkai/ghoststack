@@ -6,6 +6,7 @@ import json
 client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
 def extract_lead(email_data):
+    print("🧠 [lead_parser] Extracting lead info...")
     prompt = f"""
 You are a CRM assistant. Analyze the following email and extract only the most essential lead information.
 
