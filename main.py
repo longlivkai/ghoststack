@@ -25,7 +25,7 @@ def run():
         body=reply
         )
 
-        notify(summary['email'], summary['interest_summary'])
+        notify(summary)  
 
         print(f"[LOGGED] New interaction saved.\n")
 
