@@ -10,6 +10,7 @@ EMAIL = os.getenv("EMAIL")
 PASSWORD = os.getenv("PASSWORD")
 
 def fetch_unread_emails():
+    print("📡 [email_watcher] Fetching unread emails...")
     mail = imaplib.IMAP4_SSL("imap.gmail.com")
     mail.login(EMAIL, PASSWORD)
     mail.select("inbox")
