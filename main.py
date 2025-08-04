@@ -1,55 +1,33 @@
 import json
 from input_listeners.email_watcher import fetch_unread_emails
 from processors.lead_parser import extract_lead
-
 from control.notifier import notify
 from email_sender import send_email_response
+from creators.autoresponder import generate_response  # This is your function
 
-def generate_response(summary, tone="friendly", original_message=""):
-    from groq import Groq
-    import os
-    from dotenv import load_dotenv
-    load_dotenv()
+def run():
+    print("✅ Script started running")
 
-    client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+    emails = fetch_unread_emails()
+    print(f"📥 {len(emails)} unread email(s) fetched")
 
-    name = summary.get("name", "the sender")
-    interest = summary.get("interest_summary", "their inquiry")
+    for email_data in emails:
+        print(f"\n📨 Raw Email Data:\n{email_data}")
+        summary = extract_lead(email_data)
+        print(f"\n📋 Summary:\n{summary}")
 
-    tone_prompt = {
-        "friendly": "Use a warm, approachable tone.",
-        "professional": "Use a concise, respectful business tone.",
-        "casual": "Use a relaxed, informal tone.",
-    }.get(tone, "Use a clear and helpful tone.")
+        reply = generate_response(summary, original_message=email_data['body'])
+        print(f"\n✍️ Generated Reply:\n{reply}")
 
-    prompt = f"""
-You are an assistant helping Malakai respond to leads.
+        send_email_response(
+            recipient=summary['email'],
+            subject=f"Re: {summary['interest_summary']}",
+            body=reply
+        )
 
-Here is the original message from {name}:
-\"\"\"
-{original_message}
-\"\"\"
+        notify(summary['email'], summary['interest_summary'])
 
-Summary of the person's interest:
-{interest}
+        print(f"[LOGGED] New interaction saved.\n")
 
-Instructions:
-- Write a fresh, original email reply (no paraphrasing)
-- Thank the person for reaching out
-- Briefly acknowledge the summary of their request
-- Let them know Malakai will follow up soon
-- Keep the tone: {tone_prompt}
-- Sign off as “Malakai”
-- **Do NOT repeat or summarize the original message directly**
-
-Write only the email body.
-"""
-
-    response = client.chat.completions.create(
-        model="mixtral-8x7b-32768",
-        messages=[{"role": "user", "content": prompt}],
-        temperature=0.7
-    )
-
-    reply_text = response.choices[0].message.content.strip()
-    return reply_text
+if __name__ == "__main__":
+    run()
