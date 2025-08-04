@@ -23,6 +23,9 @@ def fetch_unread_emails():
     emails = []
 
     for eid in email_ids:
+        # ✅ Mark email as seen immediately to prevent re-processing
+        mail.store(eid, '+FLAGS', '\\Seen')
+
         _, msg_data = mail.fetch(eid, "(RFC822)")
         for response_part in msg_data:
             if isinstance(response_part, tuple):
@@ -46,3 +49,4 @@ def fetch_unread_emails():
 
     mail.logout()
     return emails
+
