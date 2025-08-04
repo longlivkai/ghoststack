@@ -7,16 +7,25 @@ client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
 def extract_lead(email_data):
     prompt = f"""
-You are a CRM assistant. Extract key lead information from the email below.
+You are a CRM assistant. Analyze the following email and extract only the most essential lead information.
 
-Return only in raw JSON format with these fields:
-- name
-- email
-- phone (if any)
-- company (if any)
-- interest_summary (brief summary of what the lead wants)
+Return a raw JSON object with these fields:
+- name: Full name of the sender
+- email: Email address of the sender
+- phone: Phone number mentioned in the email (if any)
+- company: Name of their company (if mentioned), else "Unknown"
+- interest_summary: A short, one-line summary of what the sender is requesting — DO NOT repeat the exact wording of their email.
 
-Email:
+Example format:
+{{
+  "name": "Jane Doe",
+  "email": "jane@example.com",
+  "phone": "0540000000",
+  "company": "Acme Ltd",
+  "interest_summary": "Wants a website built for her retail business"
+}}
+
+Here is the email:
 {email_data}
 """
 
@@ -31,7 +40,7 @@ Email:
 
     content = response.choices[0].message.content.strip()
 
-    # Extract JSON using regex
+    # Extract the JSON object from the response
     json_match = re.search(r"{.*}", content, re.DOTALL)
     if json_match:
         try:
