@@ -6,7 +6,7 @@ load_dotenv()
 
 client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
-def generate_response(summary, tone="friendly"):
+def generate_response(summary, tone="friendly", original_message=""):
     """
     Generate an AI response based on a lead summary.
     
@@ -25,20 +25,16 @@ def generate_response(summary, tone="friendly"):
 
     prompt = f"""
 You received an email from {name}.
-Their message or interest is: "{interest}"
+
+Here is the original message they sent:
+
+\"\"\"
+{original_message}
+\"\"\"
+
+A summary of their interest is: "{interest}"
 
 {tone_prompt}
-Thank them for reaching out, briefly acknowledge their request, and let them know you’ll respond soon.
-Sign the message as “Malakai” and avoid overpromising.
+Please write a reply thanking them for reaching out, briefly addressing their message, and letting them know you'll get back to them soon. 
+Sign the message as “Malakai” and keep the response polite and helpful without overpromising.
     """
-
-    response = client.chat.completions.create(
-        model="llama3-8b-8192",
-        messages=[
-            {"role": "system", "content": "You are an AI autoresponder. Respond clearly and concisely."},
-            {"role": "user", "content": prompt},
-        ],
-        temperature=0.7
-    )
-
-    return response.choices[0].message.content.strip()
