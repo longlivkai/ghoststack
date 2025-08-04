@@ -20,7 +20,7 @@ def run():
             summary = extract_lead(email_data)
             print("📋 Summary:", summary)
 
-            response = generate_response(str(summary))
+            response = generate_response(summary.get("interest_summary", "your request"))
 
             # ✅ Use send_email_response with actual values
             send_email_response(
