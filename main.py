@@ -1,3 +1,4 @@
+import json
 from input_listeners.email_watcher import fetch_unread_emails
 from processors.lead_parser import extract_lead
 from creators.autoresponder import generate_response
@@ -17,10 +18,12 @@ def run():
     for email_data in emails:
         print("\n📨 Raw Email Data:\n", email_data)
         try:
-            summary = extract_lead(email_data)
-            print("📋 Summary:", summary)
+            summary_str = extract_lead(email_data)
+print("📋 Summary:", summary_str)
 
-            response = generate_response(summary.get("interest_summary", "your request"))
+summary = json.loads(summary_str)  # ✅ Convert string to dict
+
+response = generate_response(summary)
 
             # ✅ Use send_email_response with actual values
             send_email_response(
