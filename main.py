@@ -20,9 +20,9 @@ def run():
         print(f"\n✍️ Generated Reply:\n{reply}")
 
         send_email_response(
-            recipient=summary['email'],
-            subject=f"Re: {summary['interest_summary']}",
-            body=reply
+        to_email=summary['email'],
+        subject=f"Re: {summary['interest_summary']}",
+        body=reply
         )
 
         notify(summary['email'], summary['interest_summary'])
