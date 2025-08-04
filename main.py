@@ -23,7 +23,7 @@ def run():
 
             summary = json.loads(summary_str)  # ✅ Convert to dict
 
-            response = generate_response(summary)
+            response = generate_response(json.dumps(summary))  # 🔁 Properly pass string
 
             send_email_response(
                 to_email=summary["email"],
