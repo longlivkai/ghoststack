@@ -1,3 +1,4 @@
+import json
 from groq import Groq
 import os
 from dotenv import load_dotenv
@@ -38,3 +39,16 @@ A summary of their interest is: "{interest}"
 Please write a reply thanking them for reaching out, briefly addressing their message, and letting them know you'll get back to them soon. 
 Sign the message as “Malakai” and keep the response polite and helpful without overpromising.
     """
+
+    # ✅ ACTUAL CALL TO GROQ API
+    response = client.chat.completions.create(
+        model="llama3-8b-8192",
+        messages=[
+            {"role": "system", "content": "You are an AI autoresponder. Respond clearly and concisely."},
+            {"role": "user", "content": prompt},
+        ],
+        temperature=0.7
+    )
+
+    # ✅ RETURN THE GENERATED MESSAGE
+    return response.choices[0].message.content.strip()
