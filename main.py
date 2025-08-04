@@ -34,4 +34,7 @@ def run():
             notify(summary_str)  # Optional: log the JSON string
 
         except Exception as e:
-            print("❌ E
+            print("❌ Error during processing:", e)
+
+if __name__ == "__main__":
+    run()
